@@ -1,14 +1,18 @@
 //ブラウザを表示するアクティビティーです
 package com.example.ushiama.gsapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.Toast;
 
 
 public class WebActivity extends ActionBarActivity {
@@ -33,7 +37,22 @@ public class WebActivity extends ActionBarActivity {
         webView.setWebViewClient(new WebViewClient());
         //URLを表示します。
         webView.loadUrl(url);
+
+        Button button = (Button) findViewById(R.id.button);
+        // ボタンがクリックされた時に呼び出されるコールバックリスナーを登録します
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // ボタンがクリックされた時に呼び出されます
+                Button button = (Button) v;
+                Toast.makeText(WebActivity.this, "Activityを削除するのだ！！！", Toast.LENGTH_SHORT).show();
+                //アクティビティを終了させる事により、一つ前のアクティビティへ戻る事が出来る。
+                finish();
+            }
+        });
+
     }
+
     //デフォルトで作成されたメニューの関数です。未使用。
 /*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
