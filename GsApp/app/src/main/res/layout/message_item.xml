@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textAppearance="?android:textAppearanceLarge"
+        android:autoLink="web"
         tools:text="comment"
         android:id="@+id/text1"/>
 
