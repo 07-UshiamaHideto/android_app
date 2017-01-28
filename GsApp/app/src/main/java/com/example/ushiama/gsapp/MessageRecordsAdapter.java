@@ -55,8 +55,6 @@ public class MessageRecordsAdapter extends ArrayAdapter<MessageRecord> {
                 TextView textView = (TextView) view;
                 //リンクをタップした時に処理するクラスを作成。AndroidSDKにあるLinkMovementMethodを拡張しています。
                 MutableLinkMovementMethod m = new MutableLinkMovementMethod();
-                //リンク以外
-                MutableLinkMovementMethod m2 = new MutableLinkMovementMethod();
                 //MutableLinkMovementMethodのイベントリスナーをさらにセットしています。
                 m.setOnUrlClickListener(new MutableLinkMovementMethod.OnUrlClickListener() {
                     //リンクをクリックした時の処理
@@ -64,6 +62,19 @@ public class MessageRecordsAdapter extends ArrayAdapter<MessageRecord> {
                         Log.d("myurl",uri.toString());//デバッグログを出力します。
                         // Intent のインスタンスを取得する。view.getContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
                         Intent intent = new Intent(view.getContext(), WebActivity.class);
+
+                        // 渡したいデータとキーを指定する。urlという名前でリンクの文字列を渡しています。
+                        intent.putExtra("url", uri.toString());
+
+                        // 遷移先の画面を呼び出す
+                        view.getContext().startActivity(intent);
+
+                    }
+                    //リンク以外をクリックした時の処理
+                    public void onClick(TextView v,Uri uri) {
+                        Log.d("myurl",uri.toString());//デバッグログを出力します。
+                        // Intent のインスタンスを取得する。view.getContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+                        Intent intent = new Intent(view.getContext(), DetailActivity.class);
 
                         // 渡したいデータとキーを指定する。urlという名前でリンクの文字列を渡しています。
                         intent.putExtra("url", uri.toString());
