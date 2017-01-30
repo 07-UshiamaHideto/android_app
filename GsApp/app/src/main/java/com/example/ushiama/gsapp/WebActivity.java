@@ -54,7 +54,7 @@ public class WebActivity extends ActionBarActivity {
     }
 
     //デフォルトで作成されたメニューの関数です。未使用。
-/*    @Override
+   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_web, menu);
@@ -75,5 +75,5 @@ public class WebActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-*/
+
 }
