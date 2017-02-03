@@ -25,6 +25,9 @@ public class UserActivity extends ActionBarActivity {
     private EditText mUsernameField;
     private EditText mPasswordField;
 
+    private EditText m2UsernameField;
+    private EditText m2PasswordField;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +59,15 @@ public class UserActivity extends ActionBarActivity {
         //EditTextのビューを探します
         mUsernameField = (EditText) findViewById(R.id.username_field);
         mPasswordField = (EditText) findViewById(R.id.password_field);
+
+        m2UsernameField = (EditText) findViewById(R.id.e_username_field);
+        m2PasswordField = (EditText) findViewById(R.id.e_password_field);
         //パスワードを隠す設定
         mPasswordField.setTransformationMethod(new PasswordTransformationMethod());
+        m2PasswordField.setTransformationMethod(new PasswordTransformationMethod());
         //パスワードの入力文字を制限する。参考：http://techbooster.jpn.org/andriod/ui/3857/
         mPasswordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        m2PasswordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         //登録ボタン
         Button signupBtn = (Button) findViewById(R.id.signup_button);
         //ログインボタン
@@ -109,8 +117,8 @@ public class UserActivity extends ActionBarActivity {
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
         //入力文字を得る
-        String username = mUsernameField.getText().toString();
-        String password = mPasswordField.getText().toString();
+        String username = m2UsernameField.getText().toString();
+        String password = m2PasswordField.getText().toString();
         try {
             //KiiCloudのユーザ登録処理
             KiiUser user = KiiUser.createWithUsername(username);
