@@ -74,7 +74,7 @@ public class SettingActivity extends AppCompatActivity {
         changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //登録処理
+                //変更処理
                 onChangeButtonClicked(v);
             }
         });
