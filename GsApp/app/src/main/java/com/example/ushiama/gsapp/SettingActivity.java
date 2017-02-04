@@ -23,7 +23,6 @@ public class SettingActivity extends AppCompatActivity {
 
     private EditText oldPasswordField;
     private EditText newPasswordField;
-    private EditText username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
