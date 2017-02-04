@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
         return records;
     }
 
-    //デフォルトで作成されたメニューの関数です。未使用。
+    //デフォルトで作成されたメニューの関数です。
     //
     @Override
    public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,6 +143,13 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //setting画面に遷移
+            // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+            Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+            // 遷移先の画面を呼び出す
+            startActivity(intent);
+            //戻れないようにActivityを終了します。
+            finish();
             return true;
         }
 
