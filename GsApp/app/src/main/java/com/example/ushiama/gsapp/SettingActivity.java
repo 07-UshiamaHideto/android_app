@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -14,13 +15,19 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.kii.cloud.storage.Kii;
 import com.kii.cloud.storage.KiiUser;
+import com.kii.cloud.storage.callback.KiiSocialCallBack;
 import com.kii.cloud.storage.callback.KiiUserCallBack;
 import com.kii.cloud.storage.exception.CloudExecutionException;
+import com.kii.cloud.storage.social.KiiSocialConnect;
+import com.kii.cloud.storage.social.connector.KiiSocialNetworkConnector;
 
-public class SettingActivity extends AppCompatActivity {
+public class SettingActivity extends ActionBarActivity {
 
+    //入力するビューです。
     private EditText oldPasswordField;
     private EditText newPasswordField;
 
@@ -35,9 +42,9 @@ public class SettingActivity extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences(getString(R.string.save_data_name), Context.MODE_PRIVATE);
         String token = pref.getString(getString(R.string.save_token), "");//保存されていない時は""
         //ログインしていない時はログインのactivityに遷移.SharedPreferencesが空の時もチェックしないとLogOutできない。
-        if (user == null || token == "") {
+        if(user == null || token == "") {
             // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
-            Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+            Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
             // 遷移先の画面を呼び出す
             startActivity(intent);
             //戻れないようにActivityを終了します。
@@ -45,22 +52,17 @@ public class SettingActivity extends AppCompatActivity {
         }
         //Userで追加ここまで
 
+        //メイン画面のレイアウトをセットしています。ListView
         setContentView(R.layout.activity_setting);
 
-    }
-
-    //ダイアログを表示する
-    void showAlert(int titleId, String message, AlertDialogFragment.AlertDialogListener listener ) {
-        DialogFragment newFragment = AlertDialogFragment.newInstance(titleId, message, listener);
-        newFragment.show(getFragmentManager(), "dialog");
     }
 
     //Viewを作る。いつもonCreateでやっていること
     protected void CreateMyView(Bundle savedInstanceState) {
         setContentView(R.layout.activity_setting);
         //EditTextのビューを探します
-        newPasswordField = (EditText) findViewById(R.id.oldpassword_field);
-        oldPasswordField = (EditText) findViewById(R.id.newpassword_field);
+        newPasswordField = (EditText) findViewById(R.id.newpassword_field);
+        oldPasswordField = (EditText) findViewById(R.id.oldpassword_field);
         //パスワードを隠す設定
         newPasswordField.setTransformationMethod(new PasswordTransformationMethod());
         oldPasswordField.setTransformationMethod(new PasswordTransformationMethod());
@@ -69,14 +71,21 @@ public class SettingActivity extends AppCompatActivity {
         oldPasswordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         //変更ボタン
         Button changeBtn = (Button) findViewById(R.id.change_button);
-        //ボタンをクリックした時の処理を設定
+        //変更ボタンをクリックした時の処理を設定
         changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //変更処理
+                // ボタンがクリックされた時に呼び出されます
+                Toast.makeText(SettingActivity.this, "CHANGEするのだ！！！", Toast.LENGTH_SHORT).show();
                 onChangeButtonClicked(v);
             }
         });
+    }
+
+    //ダイアログを表示する
+    void showAlert(int titleId, String message, AlertDialogFragment.AlertDialogListener listener ) {
+        DialogFragment newFragment = AlertDialogFragment.newInstance(titleId, message, listener);
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     //変更処理
@@ -117,7 +126,6 @@ public class SettingActivity extends AppCompatActivity {
                 }, newpassword, oldpassword);
             }
         }, username, oldpassword);
-
     }
 
     //メニュー関係：
@@ -128,7 +136,7 @@ public class SettingActivity extends AppCompatActivity {
         return true;
     }
 
- /*   @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -137,17 +145,40 @@ public class SettingActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //setting画面に遷移
+            // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+            Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+            // 遷移先の画面を呼び出す
+            startActivity(intent);
+            //戻れないようにActivityを終了します。
+            finish();
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        //return super.onOptionsItemSelected(item);
 
         //Userで追加ここから
         //ログアウト処理.KiiCloudにはログアウト機能はないのでAccesTokenを削除して対応。
 
         if (id == R.id.log_out) {
+            // The user needs to be logged in
+            KiiSocialConnect connect = Kii.socialConnect(KiiSocialConnect.SocialNetwork.SOCIALNETWORK_CONNECTOR);
+
+            Bundle option = new Bundle();
+            option.putParcelable(KiiSocialNetworkConnector.PROVIDER, KiiSocialNetworkConnector.Provider.FACEBOOK);
+
+            connect.unlink(null, option, new KiiSocialCallBack() {
+                @Override
+                public void onUnLinkCompleted(KiiSocialConnect.SocialNetwork network, KiiUser user, Exception exception) {
+                    if (exception != null) {
+                        // Error handling
+                        return;
+                    }
+                }
+            });
+
             //自動ログインのため保存されているaccess tokenを消す。
-           SharedPreferences pref = getSharedPreferences(getString(R.string.save_data_name), Context.MODE_PRIVATE);
+            SharedPreferences pref = getSharedPreferences(getString(R.string.save_data_name), Context.MODE_PRIVATE);
             pref.edit().clear().apply();
             //ログイン画面に遷移
             // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
@@ -159,7 +190,18 @@ public class SettingActivity extends AppCompatActivity {
             return true;
         }
         //Userで追加ここまで
+        //Postで追加ここから
+        //投稿処理
+        if (id == R.id.post) {
+            //投稿画面に遷移
+            // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+            Intent intent = new Intent(getApplicationContext(), PostActivity.class);
+            // 遷移先の画面を呼び出す
+            startActivity(intent);
+            return true;
+        }
+        //Postで追加ここまで
 
         return super.onOptionsItemSelected(item);
-    } */
+    }
 }

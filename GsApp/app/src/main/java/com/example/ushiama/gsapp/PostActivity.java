@@ -4,10 +4,13 @@ package com.example.ushiama.gsapp;
 import android.Manifest;
 import android.app.DialogFragment;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -176,8 +179,17 @@ public class PostActivity extends ActionBarActivity {
             FileOutputStream fos = null;
             try {
                 //ビットマップを取得
-                Bitmap bmp = MediaStore.Images.Media.getBitmap(
+                Bitmap bmp2 = MediaStore.Images.Media.getBitmap(
                         this.getContentResolver(), selectedFileUri);
+                //スケール変更
+                Matrix varMat = new Matrix();
+                varMat.postScale(0.4F, 0.4F);
+                Bitmap bmp = Bitmap.createBitmap(
+                        bmp2, 0, 0,
+                        bmp2.getWidth(),
+                        bmp2.getHeight(),
+                        varMat, true
+                );
                 //一時保存するディレクトリ。アプリに応じてgsappの部分を変更したほうが良い
                 String cacheDir = Environment.getExternalStorageDirectory()
                         .getAbsolutePath() + File.separator + "gsapp";
@@ -341,7 +353,7 @@ public class PostActivity extends ActionBarActivity {
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-/*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -358,10 +370,45 @@ public class PostActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //setting画面に遷移
+            // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+            Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+            // 遷移先の画面を呼び出す
+            startActivity(intent);
+            //戻れないようにActivityを終了します。
+            finish();
             return true;
         }
 
+        //Userで追加ここから
+        //ログアウト処理.KiiCloudにはログアウト機能はないのでAccesTokenを削除して対応。
+        if (id == R.id.log_out) {
+            //自動ログインのため保存されているaccess tokenを消す。
+            SharedPreferences pref = getSharedPreferences(getString(R.string.save_data_name), Context.MODE_PRIVATE);
+            pref.edit().clear().apply();
+            //ログイン画面に遷移
+            // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+            Intent intent = new Intent(getApplicationContext(), UserActivity.class);
+            // 遷移先の画面を呼び出す
+            startActivity(intent);
+            //戻れないようにActivityを終了します。
+            finish();
+            return true;
+        }
+        //Userで追加ここまで
+
+        //Postで追加ここから
+        //投稿処理
+        if (id == R.id.main) {
+            //投稿画面に遷移
+            // Intent のインスタンスを取得する。getApplicationContext()でViewの自分のアクティビティーのコンテキストを取得。遷移先のアクティビティーを.classで指定
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            // 遷移先の画面を呼び出す
+            startActivity(intent);
+            return true;
+        }
+        //Postで追加ここまで
         return super.onOptionsItemSelected(item);
-    } */
+    }
 
 }

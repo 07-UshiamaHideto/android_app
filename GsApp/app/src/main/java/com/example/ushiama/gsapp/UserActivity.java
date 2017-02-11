@@ -15,9 +15,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.kii.cloud.storage.Kii;
 import com.kii.cloud.storage.KiiUser;
+import com.kii.cloud.storage.callback.KiiSocialCallBack;
 import com.kii.cloud.storage.callback.KiiUserCallBack;
 import com.kii.cloud.storage.exception.CloudExecutionException;
+import com.kii.cloud.storage.social.KiiFacebookConnect;
+import com.kii.cloud.storage.social.KiiSocialConnect;
+import com.kii.cloud.storage.social.connector.KiiSocialNetworkConnector;
+import com.kii.cloud.storage.utils.Log;
 
 
 public class UserActivity extends ActionBarActivity {
@@ -72,6 +78,8 @@ public class UserActivity extends ActionBarActivity {
         Button signupBtn = (Button) findViewById(R.id.signup_button);
         //ログインボタン
         Button loginBtn = (Button) findViewById(R.id.login_button);
+        //facebook ログインボタン
+        Button fbloginBtn = (Button) findViewById(R.id.fblogin_button);
         //ログインボタンをクリックした時の処理を設定
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +88,16 @@ public class UserActivity extends ActionBarActivity {
                 onLoginButtonClicked(v);
             }
         });
+
+        //facebook ログインボタンをクリックした時の処理を設定
+        fbloginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //facebook ログイン処理
+                onFbLoginButtonClicked(v);
+            }
+        });
+
         //登録ボタンをクリックした時の処理を設定
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +121,41 @@ public class UserActivity extends ActionBarActivity {
         } catch (Exception e) {
             //ダイアログを表示
             showAlert(R.string.operation_failed, e.getLocalizedMessage(), null);
+        }
+    }
+    //facebookログイン処理
+    public void onFbLoginButtonClicked(View v) {
+        KiiSocialConnect connect = (KiiFacebookConnect) Kii.socialConnect(KiiSocialConnect.SocialNetwork.FACEBOOK);
+        connect.initialize("165843843913897", "7cab45dc19458d630f9ecb4a92ffd320", null);
+        Log.v("FB", "loginSuccess");
+        Bundle options = new Bundle();
+        Bundle b = connect.getAccessTokenBundle();
+        //options.putParcelable(KiiSocialNetworkConnector.PROVIDER, KiiSocialNetworkConnector.Provider.FACEBOOK);
+
+        String accessToken = b.getString("oauth_token");
+        options.putString("accessToken", accessToken);
+        options.putParcelable("provider", KiiSocialNetworkConnector.Provider.FACEBOOK);
+        KiiSocialNetworkConnector conn = (KiiSocialNetworkConnector) Kii.socialConnect(KiiSocialConnect.SocialNetwork.SOCIALNETWORK_CONNECTOR);
+
+        // Login.
+        connect.logIn(UserActivity.this, options, new KiiSocialCallBack() {
+            @Override
+            public void onLoginCompleted(KiiSocialConnect.SocialNetwork network, KiiUser user, Exception exception) {
+                if (exception != null) {
+                    // Error handling
+                    showAlert(R.string.operation_failed, exception.getLocalizedMessage(), null);
+                    return;
+                }
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == KiiSocialNetworkConnector.REQUEST_CODE) {
+            Kii.socialConnect(KiiSocialConnect.SocialNetwork.SOCIALNETWORK_CONNECTOR).respondAuthOnActivityResult(
+                    requestCode,
+                    resultCode,
+                    data);
         }
     }
     //ダイアログを表示する

@@ -11,6 +11,8 @@
     <string name="new_password">Enter new password (4-50 length)</string>
     <string name="sign_up">Sign Up</string>
     <string name="log_in">Log In</string>
+    <string name="fb_login">facebook Log In</string>
+    <string name="pass_change">Password Change </string>
     <string name="change_pass">Change Password</string>
     <string name="operation_failed">Operation failed</string>
     <string name="title_activity_user">UserActivity</string>
