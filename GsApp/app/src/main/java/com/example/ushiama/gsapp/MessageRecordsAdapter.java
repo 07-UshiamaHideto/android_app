@@ -105,7 +105,7 @@ public class MessageRecordsAdapter extends ArrayAdapter<MessageRecord> {
         imageView.setImageUrl(imageRecord.getImageUrl(), mImageLoader);
         //Viewに文字をセットします。
         textView.setText(imageRecord.getComment());
-        textView2.setText(imageRecord.getNumber());
+        // textView2.setText(imageRecord.getNumber());
 
         //1つのセルのViewを返します。
         return convertView;
