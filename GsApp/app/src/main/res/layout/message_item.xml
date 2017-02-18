@@ -28,5 +28,17 @@
         android:autoLink="web"
         tools:text="comment"
         android:id="@+id/text1"/>
+    <!-- Goodで追加ここから-->
+    <Button android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/good" />
+    <!-- Goodで追加ここまで-->
+    <!-- Badで追加ここから-->
+    <Button android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bad" />
+    <!-- Badで追加ここまで-->
 
 </LinearLayout>
